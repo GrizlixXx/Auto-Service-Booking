@@ -50,14 +50,31 @@ router.get('/', async (req, res) => {
     );
     legacyBooked.forEach(b => bookedTimes.add(b.booked_time));
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(date);
-    const isPast = selectedDate < today;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const isToday = date === todayStr;
+
+    // For today: a slot is only valid if its start time is at least 1 hour from now.
+    const minAllowedMinutes = isToday
+      ? (now.getHours() + 1) * 60 + now.getMinutes()
+      : 0;
+
+    // A past date has no available slots at all.
+    const selectedDateMs = new Date(date).getTime();
+    const todayMs = new Date(todayStr).getTime();
+    const isPast = selectedDateMs < todayMs;
+
+    const toMinutes = t => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
 
     const result = slots.map(time => ({
       time,
-      available: !isPast && !bookedTimes.has(time),
+      available:
+        !isPast &&
+        !bookedTimes.has(time) &&
+        (!isToday || toMinutes(time) >= minAllowedMinutes),
     }));
 
     res.json({ date, salon_id: parseInt(salon_id), slots: result });

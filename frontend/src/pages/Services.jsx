@@ -76,6 +76,11 @@ export default function Services() {
   const upcomingDays = useMemo(() => {
     const list = [];
     const now = new Date();
+    // Current time in minutes since midnight
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    // Minimum slot start time: current time + 60 min buffer
+    const minBookableMinutes = nowMinutes + 60;
+
     for (let i = 0; i < 7; i++) {
       const d = new Date();
       d.setDate(now.getDate() + i);
@@ -83,18 +88,32 @@ export default function Services() {
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
       const dateStr = `${yyyy}-${mm}-${dd}`;
+
+      if (i === 0 && selectedSalon) {
+        // For today, skip the day entirely if the salon closes before the minimum bookable time.
+        const closeTimeParts = selectedSalon.close_time
+          ? selectedSalon.close_time.split(':').map(Number)
+          : [18, 0];
+        const closeMinutes = closeTimeParts[0] * 60 + (closeTimeParts[1] || 0);
+        if (minBookableMinutes >= closeMinutes) continue;
+      }
+
       const weekday = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
       const dayMonth = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       list.push({ dateStr, weekday, dayMonth });
     }
     return list;
-  }, []);
+  }, [selectedSalon]);
 
   useEffect(() => {
-    if (step === 2 && !selectedDate && upcomingDays.length > 0) {
-      setSelectedDate(upcomingDays[0].dateStr);
+    if (step === 2 && upcomingDays.length > 0) {
+      // Always reset date when moving to step 2 so stale "Today" is not kept if salon changed.
+      const currentValid = upcomingDays.find(d => d.dateStr === selectedDate);
+      if (!currentValid) {
+        setSelectedDate(upcomingDays[0].dateStr);
+      }
     }
-  }, [step, selectedDate, upcomingDays]);
+  }, [step, selectedSalon, upcomingDays]);
 
   useEffect(() => {
     if (user?.phone && !phone) {
@@ -360,47 +379,61 @@ export default function Services() {
                   onChange={e => setSelectedDate(e.target.value)} />
               </div>
 
-              {selectedDate && (
-                <div>
-                  <label className="form-label">
-                    <Clock size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 4 }} />
-                    Available Time Slots for {selectedDate}:
-                  </label>
-                  {slotsLoading ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}><div className="spinner" /></div>
-                  ) : slots.length === 0 ? (
-                    <div className="alert alert-info">No service slots scheduled for this date. Please try another day.</div>
-                  ) : (
-                    <>
-                      {slots.every(s => !s.available) && (
-                        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                          <AlertOctagon size={28} color="#ef4444" style={{ flexShrink: 0 }} />
-                          <div>
-                            <strong>All Appointment Slots Are Fully Booked!</strong>
-                            <div style={{ fontSize: '0.875rem', marginTop: '0.2rem', opacity: 0.9 }}>
-                              Every slot for <strong>{selectedDate}</strong> at this center has already been reserved. Please pick another date from the pills above or try another nearby center.
+              {selectedDate && (() => {
+                const todayStr = new Date().toISOString().slice(0, 10);
+                const isToday = selectedDate === todayStr;
+                const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+                const minBookable = nowMinutes + 60;
+                const slotToMinutes = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+
+                return (
+                  <div>
+                    <label className="form-label">
+                      <Clock size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 4 }} />
+                      Available Time Slots for {selectedDate}:
+                    </label>
+                    {slotsLoading ? (
+                      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}><div className="spinner" /></div>
+                    ) : slots.length === 0 ? (
+                      <div className="alert alert-info">No service slots scheduled for this date. Please try another day.</div>
+                    ) : (
+                      <>
+                        {slots.every(s => !s.available) && (
+                          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                            <AlertOctagon size={28} color="#ef4444" style={{ flexShrink: 0 }} />
+                            <div>
+                              <strong>All Appointment Slots Are Fully Booked!</strong>
+                              <div style={{ fontSize: '0.875rem', marginTop: '0.2rem', opacity: 0.9 }}>
+                                Every slot for <strong>{selectedDate}</strong> at this center has already been reserved. Please pick another date from the pills above or try another nearby center.
+                              </div>
                             </div>
                           </div>
+                        )}
+                        <div className="slots-grid">
+                          {slots.map(slot => {
+                            const isPast = isToday && slotToMinutes(slot.time) < minBookable;
+                            const label = !slot.available
+                              ? (isPast ? 'Past' : 'Taken')
+                              : null;
+                            return (
+                              <button
+                                key={slot.time}
+                                type="button"
+                                className={`slot-btn ${slot.available ? '' : 'slot-btn--taken'} ${selectedSlot === slot.time ? 'slot-btn--selected' : ''}`}
+                                disabled={!slot.available}
+                                onClick={() => setSelectedSlot(slot.time)}
+                              >
+                                {slot.time}
+                                {label && <span style={{ fontSize: '0.65rem', display: 'block', opacity: 0.6 }}>{label}</span>}
+                              </button>
+                            );
+                          })}
                         </div>
-                      )}
-                      <div className="slots-grid">
-                        {slots.map(slot => (
-                          <button
-                            key={slot.time}
-                            type="button"
-                            className={`slot-btn ${slot.available ? '' : 'slot-btn--taken'} ${selectedSlot === slot.time ? 'slot-btn--selected' : ''}`}
-                            disabled={!slot.available}
-                            onClick={() => setSelectedSlot(slot.time)}
-                          >
-                            {slot.time}
-                            {!slot.available && <span style={{ fontSize: '0.65rem', display: 'block', opacity: 0.6 }}>Taken</span>}
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
 
