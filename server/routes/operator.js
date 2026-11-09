@@ -9,7 +9,7 @@ const BOT_INTERNAL_PORT = process.env.BOT_INTERNAL_PORT || 5050;
 
 async function notifyBotOperator(userLogin, reason, userPhone, userEmail) {
   try {
-    await fetch(`http://localhost:${BOT_INTERNAL_PORT}/notify/operator`, {
+    await fetch(`http://127.0.0.1:${BOT_INTERNAL_PORT}/notify/operator`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -20,7 +20,8 @@ async function notifyBotOperator(userLogin, reason, userPhone, userEmail) {
       }),
     });
   } catch (err) {
-    console.warn('[Operator] Could not notify bot:', err.message);
+    const detail = err.cause?.code || err.cause?.message || err.message;
+    console.warn(`[Operator] Could not notify bot (${detail}). Is the bot running? (python bot/main.py)`);
   }
 }
 

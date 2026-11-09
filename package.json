@@ -10,7 +10,8 @@
     "migrate": "node server/migrate.js",
     "build": "npm --prefix frontend install && npm --prefix frontend run build",
     "heroku-postbuild": "npm --prefix frontend install && npm --prefix frontend run build",
-    "set-role": "node server/set-role.js"
+    "set-role": "node server/set-role.js",
+    "bot": "python bot/main.py"
   },
   "keywords": [
     "auto-service",

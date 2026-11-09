@@ -68,9 +68,9 @@ async def main():
     http_app = make_http_app(bot)
     runner = web.AppRunner(http_app)
     await runner.setup()
-    site = web.TCPSite(runner, "localhost", BOT_INTERNAL_PORT)
+    site = web.TCPSite(runner, "127.0.0.1", BOT_INTERNAL_PORT)
     await site.start()
-    logger.info(f"Internal HTTP server running on http://localhost:{BOT_INTERNAL_PORT}")
+    logger.info(f"Internal HTTP server running on http://127.0.0.1:{BOT_INTERNAL_PORT}")
 
     logger.info("Starting Telegram polling...")
     await application.initialize()
