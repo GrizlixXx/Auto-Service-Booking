@@ -12,7 +12,8 @@ import {
   ArrowRight,
   Upload,
   Trash2,
-  Download
+  Download,
+  UserRound
 } from 'lucide-react';
 import api from '../api/axios';
 import './UserAccount.css';
@@ -150,7 +151,7 @@ export default function UserAccount() {
               />
             ) : (
               <div className="account-avatar__circle">
-                {user?.login?.charAt(0).toUpperCase()}
+                <UserRound size={36} strokeWidth={1.5} />
               </div>
             )}
             <div className="account-avatar__info">
@@ -258,7 +259,7 @@ export default function UserAccount() {
                     />
                   ) : (
                     <div className="avatar-manager__circle">
-                      {user?.login?.charAt(0).toUpperCase()}
+                      <UserRound size={48} strokeWidth={1.5} />
                     </div>
                   )}
                 </div>

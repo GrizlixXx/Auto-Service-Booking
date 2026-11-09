@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Wrench, LogIn, LogOut, Headphones, ShieldCheck } from 'lucide-react';
+import { Wrench, LogIn, LogOut, Headphones, ShieldCheck, UserRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
@@ -71,7 +71,7 @@ export default function Navbar() {
                   />
                 ) : (
                   <div className="navbar__avatar">
-                    {user.login?.charAt(0).toUpperCase()}
+                    <UserRound size={18} strokeWidth={1.8} />
                   </div>
                 )}
                 <span className="navbar__username">{user.login}</span>
