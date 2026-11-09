@@ -1,0 +1,39 @@
+{
+  "name": "autofix-service",
+  "version": "1.0.0",
+  "description": "Full-stack Auto Service Booking Platform with Express, React SPA, MySQL and Telegram Bot",
+  "main": "server/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "migrate": "node server/migrate.js",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "heroku-postbuild": "npm --prefix frontend install && npm --prefix frontend run build",
+    "set-role": "node server/set-role.js"
+  },
+  "keywords": [
+    "auto-service",
+    "booking",
+    "express",
+    "react",
+    "mysql",
+    "telegram-bot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.0",
+    "mysql2": "^3.17.1",
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

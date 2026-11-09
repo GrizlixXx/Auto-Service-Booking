@@ -1,0 +1,114 @@
+/* ── Auth Pages Shared CSS ── */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 20%, rgba(59,130,246,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 70% 70%, rgba(6,182,212,0.08) 0%, transparent 60%),
+    var(--bg-primary);
+  z-index: 0;
+}
+
+.auth-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 2.5rem;
+  animation: fadeInUp 0.4s ease forwards;
+}
+.auth-container--wide { max-width: 680px; }
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-header__icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+.auth-header__icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  margin-bottom: 0.75rem;
+}
+.auth-header__title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+.auth-header__sub { color: var(--text-secondary); font-size: 0.9rem; }
+
+.auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.auth-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-footer-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 1.5rem;
+}
+.auth-link {
+  color: var(--accent-blue);
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+.auth-link:hover { color: var(--accent-cyan); }
+
+/* Password strength */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.password-strength__bars {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+.password-strength__bar {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  transition: background 0.3s ease;
+}
+.password-strength__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 70px;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .auth-form__row { grid-template-columns: 1fr; }
+  .auth-container--wide { max-width: 100%; }
+}

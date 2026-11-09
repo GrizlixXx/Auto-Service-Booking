@@ -1,0 +1,25 @@
+.stub-page { min-height: 100vh; }
+.stub-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px);
+}
+.stub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+.stub-icon { font-size: 3.5rem; }
+.stub-card h1 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+.stub-card p { color: var(--text-secondary); }
+.stub-sub { font-size: 0.875rem; color: var(--text-muted); }
