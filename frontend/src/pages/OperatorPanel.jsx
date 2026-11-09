@@ -64,11 +64,12 @@ export default function OperatorPanel() {
               <div key={r.id} className="request-card glass-card">
                 <div className="request-card__head">
                   <span className="request-card__user" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                    {r.avatar_url ? (
+                    {r.avatar_url && !r.avatar_url.includes('default') && !r.avatar_url.includes('profilesPhotos') ? (
                       <img
                         src={r.avatar_url}
                         alt={r.user_login}
                         style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent-blue)', flexShrink: 0 }}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       />
                     ) : (
                       <User size={16} />

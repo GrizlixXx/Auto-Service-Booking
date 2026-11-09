@@ -30,6 +30,19 @@ export default function UserAccount() {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const [avatarError, setAvatarError] = useState(false);
+
+  const rawAvatarUrl = user?.avatar_url || user?.profilePhoto;
+  const hasAvatar = Boolean(
+    rawAvatarUrl &&
+    !avatarError &&
+    !rawAvatarUrl.includes('default') &&
+    !rawAvatarUrl.includes('profilesPhotos')
+  );
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [rawAvatarUrl]);
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
@@ -143,11 +156,12 @@ export default function UserAccount() {
       <div className="container account-container">
         <aside className="account-sidebar glass-card">
           <div className="account-avatar">
-            {user?.avatar_url || user?.profilePhoto ? (
+            {hasAvatar ? (
               <img
-                src={user.avatar_url || user.profilePhoto}
-                alt={user.login}
+                src={rawAvatarUrl}
+                alt={user?.login}
                 className="account-avatar__img"
+                onError={() => setAvatarError(true)}
               />
             ) : (
               <div className="account-avatar__circle">
@@ -251,11 +265,12 @@ export default function UserAccount() {
 
               <div className="avatar-manager glass-card">
                 <div className="avatar-manager__left">
-                  {user?.avatar_url || user?.profilePhoto ? (
+                  {hasAvatar ? (
                     <img
-                      src={user.avatar_url || user.profilePhoto}
-                      alt={user.login}
+                      src={rawAvatarUrl}
+                      alt={user?.login}
                       className="avatar-manager__preview"
+                      onError={() => setAvatarError(true)}
                     />
                   ) : (
                     <div className="avatar-manager__circle">

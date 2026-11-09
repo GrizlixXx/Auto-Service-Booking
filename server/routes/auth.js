@@ -123,8 +123,8 @@ router.post('/login', async (req, res) => {
         login: user.user_login,
         email: user.email,
         phone: user.phone_number,
-        avatar_url: user.avatar_url,
-        profilePhoto: user.avatar_url,
+        avatar_url: (user.avatar_url && !user.avatar_url.includes('default') && !user.avatar_url.includes('profilesPhotos')) ? user.avatar_url : null,
+        profilePhoto: (user.avatar_url && !user.avatar_url.includes('default') && !user.avatar_url.includes('profilesPhotos')) ? user.avatar_url : null,
         role: user.role || 'client',
       },
     });

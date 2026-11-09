@@ -10,6 +10,19 @@ export default function Navbar() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+
+  const rawAvatarUrl = user?.avatar_url || user?.profilePhoto;
+  const hasAvatar = Boolean(
+    rawAvatarUrl &&
+    !avatarError &&
+    !rawAvatarUrl.includes('default') &&
+    !rawAvatarUrl.includes('profilesPhotos')
+  );
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [rawAvatarUrl]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -63,11 +76,12 @@ export default function Navbar() {
           {isAuthenticated ? (
             <div className="navbar__user">
               <Link to="/account" className="navbar__user-link" title="My Account">
-                {user.avatar_url || user.profilePhoto ? (
+                {hasAvatar ? (
                   <img
-                    src={user.avatar_url || user.profilePhoto}
+                    src={rawAvatarUrl}
                     alt={user.login}
                     className="navbar__avatar-img"
+                    onError={() => setAvatarError(true)}
                   />
                 ) : (
                   <div className="navbar__avatar">

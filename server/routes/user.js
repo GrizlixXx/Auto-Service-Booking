@@ -41,13 +41,14 @@ router.get('/profile/:login', async (req, res) => {
     }
 
     const u = users[0];
+    const safeAvatarUrl = (u.avatar_url && !u.avatar_url.includes('default') && !u.avatar_url.includes('profilesPhotos')) ? u.avatar_url : null;
     res.json({
       id: u.id,
       login: u.user_login,
       email: u.email,
       phone: u.phone_number,
-      avatar_url: u.avatar_url,
-      profilePhoto: u.avatar_url,
+      avatar_url: safeAvatarUrl,
+      profilePhoto: safeAvatarUrl,
       role: u.role || 'client',
     });
   } catch (error) {

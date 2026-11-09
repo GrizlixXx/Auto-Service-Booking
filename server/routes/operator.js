@@ -64,7 +64,10 @@ router.get('/requests', async (req, res) => {
         r.created_at, 
         u.email, 
         u.phone_number,
-        u.avatar_url 
+        CASE 
+          WHEN u.avatar_url LIKE '%default%' OR u.avatar_url LIKE '%profilesPhotos%' THEN NULL 
+          ELSE u.avatar_url 
+        END AS avatar_url 
       FROM operator_requests r 
       LEFT JOIN users u ON r.user_login = u.user_login 
       ORDER BY r.created_at DESC
